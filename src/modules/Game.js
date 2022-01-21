@@ -1,18 +1,20 @@
-import TileMap from "./TileMap.js";
+import TileMap from "./TileMap.js"
 
-
+// constant variables
 const tileSize = 32;                                    //Each square in the map is 32 pixles
+const velocity = 1;
+
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext('2d');
 const gameMap = new TileMap(tileSize);
-
+const pacman = TileMap.getPacman(velocity)
 
 
 // Redraw the screen certain amount of times every 1 second
 function gameLoop(){
-    console.log('gg')
     gameMap.draw(ctx);
 
+    pacman.draw(ctx)
 
 }
 
