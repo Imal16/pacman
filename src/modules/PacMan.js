@@ -17,6 +17,9 @@ class PacMan{
         this.animationTimerDefault = 10;
         this.animationTimer = null;
 
+        this.pacmanRotation = this.Rotation.right;
+
+        this.wakaSound = new Audio("../../assets/sounds/waka.wav");
 
         document.addEventListener("keydown", this.#keydown);
 
@@ -25,12 +28,33 @@ class PacMan{
         this.#loadPacmanImages();
     }
 
+
+    Rotation= {
+        up: 0,
+        down: 1,
+        left: 2,
+        right: 3,
+    }
+
+
+
     draw(ctx){
 
+        const size = this.tilesize / 2;
+
+        // private method;
         this.#move();
         this.#animation();
+        this.#eatDot();
 
-        ctx.drawImage(this.pacmanImages[this.pacmanImageIndex], this.x, this.y,this.tilesize, this.tilesize);
+        ctx.save();
+        ctx.translate(this.x + size, this.y + size);
+        ctx.rotate((this.pacmanRotation * 90 * Math.PI) / 180);
+        ctx.drawImage(this.pacmanImages[this.pacmanImageIndex], -size, -size, this.tilesize, this.tilesize);
+        //restore state that was save
+        ctx.restore();
+
+        //ctx.drawImage(this.pacmanImages[this.pacmanImageIndex], this.x, this.y,this.tilesize, this.tilesize);
 
     }
 
@@ -118,21 +142,25 @@ class PacMan{
         switch(this.currentDirection){
 
             case MovingDirection.up:
-            // (0,0) is top left of map
-            this.y -= this.velocity;
-            break; 
+                // (0,0) is top left of map
+                this.y -= this.velocity;
+                this.pacmanRotation = this.Rotation.right;
+                break; 
 
             case MovingDirection.down:
-            this.y += this.velocity;
-            break;
+                this.y += this.velocity;
+                this.pacmanRotation = this.Rotation.down;
+                break;
 
             case MovingDirection.left:
-            this.x -= this.velocity;
-            break; 
+                this.x -= this.velocity;
+                this.pacmanRotation = this.Rotation.left;
+                break; 
 
             case MovingDirection.right:
-            this.x += this.velocity;
-            break; 
+                this.x += this.velocity;
+                this.pacmanRotation = this.Rotation.up;
+                break; 
         }
     }
 
@@ -149,6 +177,13 @@ class PacMan{
             if(this.pacmanImageIndex == this.pacmanImages.length){
                 this.pacmanImageIndex = 0;
             }
+        }
+    }
+
+    #eatDot(){
+        if(this.tilemap.eatDot(this.x, this.y)) {
+            //If dot is eaten play a sound
+            //this.wakaSound.play();
         }
     }
 

@@ -48,6 +48,9 @@ class TileMap{
                 else if (tile == 0){
                     this.#drawDot(ctx, col, row, this.tileSize);
                 }
+                else{
+                    this.#drawBlank(ctx, col, row, this.tileSize);
+                }
             }
         }
 
@@ -71,6 +74,10 @@ class TileMap{
             size)
     }
 
+    #drawBlank(ctx, column, row, size){
+        ctx.fillStyle = 'black';
+        ctx.fillRect(column * this.tileSize, row * this.tileSize, size, size);
+    }
 
     getPacman(velocity){
         for( let row=0; row< this.map.length; row++){
@@ -136,6 +143,20 @@ class TileMap{
             const tile = this.map[row][column];
             if (tile === 1){
 
+                return true;
+            }
+        }
+        return false;
+    }
+    eatDot(x, y) {
+        const row = y / this.tileSize;
+        const col = x / this.tileSize;
+        if(Number.isInteger(row) && Number.isInteger(col)){
+            //if square contains a dot
+            if(this.map[row][col] == 0) {
+                // set array to 5 for empty space
+                this.map[row][col] = 5;
+                
                 return true;
             }
         }
