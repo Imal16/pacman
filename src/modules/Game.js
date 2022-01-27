@@ -6,16 +6,18 @@ const velocity = 2;
 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext('2d');
+
 const gameMap = new TileMap(tileSize);
 const pacman = gameMap.getPacman(velocity);
+const ghosts = gameMap.getGhosts(velocity);
 
 
 // Redraw the screen certain amount of times every 1 second
 function gameLoop(){
     gameMap.draw(ctx);
-
     pacman.draw(ctx);
-
+    ghosts.forEach((ghost) => ghost.draw(ctx));
+    
 }
 
 

@@ -1,6 +1,6 @@
 import PacMan from "./PacMan.js"
 import MovingDirection from "./Movement.js";
-
+import Ghost from "./Ghost.js";
 
 class TileMap{
     constructor(tileSize){
@@ -28,10 +28,10 @@ class TileMap{
       [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
       [1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1],
       [1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1],
-      [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+      [1, 0, 1, 0, 1, 6, 1, 0, 1, 0, 1, 0, 1],
       [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
       [1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1],
-      [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+      [1, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 1],
       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     ];
 
@@ -93,6 +93,24 @@ class TileMap{
 
         }
     }
+
+    getGhosts(velocity){
+        const ghosts = [];
+
+        for(let row =0; row < this.map.length; row++){
+            for(let col = 0; col < this.map[row].length; col++){
+                const tile = this.map[row][col];
+                if(tile == 6){
+                    //if ghost, replace map tile with dot and push new ghost object onto array with updated locations
+                    this.map[row][col] = 0;
+                    ghosts.push(new Ghost(col * this.tileSize, row * this.tileSize, this.tileSize, velocity, this));
+                }
+            }
+        }
+        return ghosts;
+    }
+
+
 
     setCanvasSize(canvas){
         canvas.width = this.map[0].length * this.tileSize;
