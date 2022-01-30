@@ -34,6 +34,23 @@ export default class Ghost{
 
     }
 
+    collide(pacman){
+        // Example on Mozilla developer page for 2D collision detection
+        const size = this.tilesize / 2; // Pacman is halway above an ghost
+        if(this.x < pacman.x + size &&
+            this.x + size > pacman.x &&
+            this.y < pacman.y + size &&
+            this.y + size > pacman.y
+            ){
+                return true;
+        }
+        else{
+            return false;
+        }
+
+    }
+
+
     #setImage(ctx, pacman){
         if(pacman.powerDotActive){
             this.#setScaredImage(pacman);

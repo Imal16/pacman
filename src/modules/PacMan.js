@@ -25,11 +25,11 @@ class PacMan{
         this.powerDotActive = false;
         this.powerDotExpire = false;
 
+        this.EatGhostSound = new Audio("../../assets/sounds/eat_ghost.wav");
+
         this.madeFirstMove = false;
 
         document.addEventListener("keydown", this.#keydown);
-
-
 
         this.#loadPacmanImages();
     }
@@ -44,15 +44,18 @@ class PacMan{
 
 
 
-    draw(ctx){
+    draw(ctx, pause, ghosts){
 
         const size = this.tilesize / 2;
 
         // private method;
-        this.#move();
-        this.#animation();
+        if(!pause){
+            this.#move();
+            this.#animation();
+        }
         this.#eatDot();
         this.#eatPowerDot();
+        this.#eatGhost(ghosts);
 
 
         ctx.save();
@@ -226,6 +229,19 @@ class PacMan{
         }
     }
 
+    #eatGhost(ghosts) {
+        if(this.powerDotActive){
+            const GhostCollision = ghosts.filter((ghost) => ghost.collide(this));
+
+            GhostCollision.forEach((ghost) => {
+                ghosts.splice(ghosts.indexOf(ghost), 1);        // splice: Modify array by removing item from it
+                this.EatGhostSound.play();
+
+                setTimeout(() => ghosts.push(ghost), 1000 * 10); // Ghost respawn after 10  seconds
+            });
+        }
+
+    }
 
 
 
