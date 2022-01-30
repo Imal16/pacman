@@ -6,11 +6,20 @@ class TileMap{
     constructor(tileSize){
         this.tileSize = tileSize;
 
-        this.yellowDot = new Image()
+        this.yellowDot = new Image();
         this.yellowDot.src = '../../assets/images/yellowDot.png';
 
-        this.wall = new Image()
+        this.pinkDot = new Image();
+        this.pinkDot.src = '../../assets/images/pinkDot.png';
+
+
+        this.wall = new Image();
         this.wall.src = '../../assets/images/wall.png';
+
+        this.powerDot = this.pinkDot;
+        this.powerDotTimerDefault = 80;
+        this.powerDotTimerTimer = this.powerDotTimerDefault
+
 
     }
 
@@ -23,14 +32,14 @@ class TileMap{
     //7 - power dot
     map = [
       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [1, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 1],
+      [1, 7, 0, 0, 4, 0, 0, 0, 0, 0, 0, 7, 1],
       [1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1],
       [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
       [1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1],
       [1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1],
       [1, 0, 1, 0, 1, 6, 1, 0, 1, 0, 1, 0, 1],
       [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
-      [1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1],
+      [1, 0, 1, 0, 1, 7, 1, 0, 0, 0, 1, 0, 1],
       [1, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 6, 1],
       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     ];
@@ -47,6 +56,9 @@ class TileMap{
                 }
                 else if (tile == 0){
                     this.#drawDot(ctx, col, row, this.tileSize);
+                }
+                else if(tile == 7){
+                    this.#drawPowerDot(ctx, col, row, this.tileSize);
                 }
                 else{
                     this.#drawBlank(ctx, col, row, this.tileSize);
@@ -73,6 +85,24 @@ class TileMap{
             size, 
             size)
     }
+
+    #drawPowerDot(ctx, column, row, size){
+        this.powerDotTimerTimer--;
+        if(this.powerDotTimerTimer == 0) {
+            this.powerDotTimerTimer = this.powerDotTimerDefault;
+            // Switch color of powerDot image
+            if(this.powerDot == this.pinkDot){
+                this.powerDot = this.yellowDot;
+            } else{
+                this.powerDot = this.pinkDot;
+            }
+        }
+        ctx.drawImage(this.powerDot, column * size, row * size, 1.15*size, 1.15*size);
+    }
+
+
+
+
 
     #drawBlank(ctx, column, row, size){
         ctx.fillStyle = 'black';
@@ -175,6 +205,20 @@ class TileMap{
                 // set array to 5 for empty space
                 this.map[row][col] = 5;
                 
+                return true;
+            }
+        }
+        return false;
+    }
+
+    eatPowerDot(x, y){
+        const row = y / this.tileSize;
+        const col = x / this.tileSize;
+        if(Number.isInteger(row) && Number.isInteger(col)){
+            const tile = this.map[row][col];
+            if (tile == 7){
+                // Set to empty space
+                this.map[row][col] = 5;
                 return true;
             }
         }

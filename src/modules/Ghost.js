@@ -18,14 +18,55 @@ export default class Ghost{
         this.directionTimerDefault = this.#random(1, 5);
         this.directionTimer = this.directionTimerDefault;
 
+        this.scaredTimerDefault = 10;
+        this.scaredTimer = this.scaredTimerDefault;
+
     }
 
-    draw(ctx){
-        this.#move();
-        this.#changeDirection();
+    draw(ctx, pause, pacman){
+        if(!pause){
+            this.#move();
+            this.#changeDirection();
+        }
+        this.#setImage(ctx, pacman);
+
         ctx.drawImage(this.image, this.x, this.y, this.tilesize, this.tilesize);
 
     }
+
+    #setImage(ctx, pacman){
+        if(pacman.powerDotActive){
+            this.#setScaredImage(pacman);
+        }
+        else{
+            this.image = this.normalGhost;
+        }
+        ctx.drawImage(this.image, this.x, this.y, this.tilesize, this.tilesize);
+    }
+
+
+    #setScaredImage(pacman){
+        if (pacman.powerDotExpire){
+            this.scaredTimer--;
+            if(this.scaredTimer === 0){
+                this.scaredTimer = this.scaredTimerDefault;
+                // Flash image of ghosts by alternating between images
+                if(this.image === this.scaredGhost1){
+                    this.image = this.scaredGhost2;
+                } else{
+                    this.image = this.scaredGhost1;
+                }
+            }
+        }
+        else{
+            this.image = this.scaredGhost1;
+        }
+    }
+
+
+
+
+
 
     #move(){
         

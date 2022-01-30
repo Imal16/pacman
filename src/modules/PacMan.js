@@ -20,6 +20,12 @@ class PacMan{
         this.pacmanRotation = this.Rotation.right;
 
         this.wakaSound = new Audio("../../assets/sounds/waka.wav");
+        
+        this.powerDotSound = new Audio("../../assets/sounds/power_dot.wav");
+        this.powerDotActive = false;
+        this.powerDotExpire = false;
+
+        this.madeFirstMove = false;
 
         document.addEventListener("keydown", this.#keydown);
 
@@ -46,6 +52,8 @@ class PacMan{
         this.#move();
         this.#animation();
         this.#eatDot();
+        this.#eatPowerDot();
+
 
         ctx.save();
         ctx.translate(this.x + size, this.y + size);
@@ -61,7 +69,7 @@ class PacMan{
     #loadPacmanImages(){
 
         const pacmanImage1  = new Image();
-        pacmanImage1.src = "../../assets/images/pac0.png"
+        pacmanImage1.src = "../../assets/images/pac0.png";
 
         const pacmanImage2  = new Image();
         pacmanImage2.src = "../../assets/images/pac1.png";
@@ -78,6 +86,7 @@ class PacMan{
 
 
         this.pacmanImageIndex = 0;
+        this.timers = [];
 
     }
 
@@ -88,6 +97,7 @@ class PacMan{
                 this.currentDirection = MovingDirection.up;
             }
             this.requestedDirection = MovingDirection.up;
+            this.madeFirstMove = true;
         }
         // down arrow
         if(event.keyCode == 40){
@@ -95,6 +105,7 @@ class PacMan{
                 this.currentDirection = MovingDirection.down;
             }
             this.requestedDirection = MovingDirection.down;
+            this.madeFirstMove = true;
 
 
         }
@@ -104,6 +115,7 @@ class PacMan{
                 this.currentDirection = MovingDirection.left;
             }
             this.requestedDirection = MovingDirection.left;
+            this.madeFirstMove = true;
         }
         //right arrow        
         if(event.keyCode == 39){
@@ -111,6 +123,7 @@ class PacMan{
                 this.currentDirection = MovingDirection.right;
             }
             this.requestedDirection = MovingDirection.right;
+            this.madeFirstMove = true;
         }
     };
 
@@ -181,13 +194,37 @@ class PacMan{
     }
 
     #eatDot(){
-        if(this.tilemap.eatDot(this.x, this.y)) {
+        if(this.tilemap.eatDot(this.x, this.y) && this.madeFirstMove) {
             //If dot is eaten play a sound
-            //this.wakaSound.play();
+            this.wakaSound.play();
         }
     }
 
+    #eatPowerDot(){
+        if(this.tilemap.eatPowerDot(this.x, this.y)) {
+            // the ghost will become blue
+            this.powerDotSound.play();
+            this.powerDotActive = true;
+            this.powerDotExpire = false;
+            
+            this.timers.forEach((timer) => clearTimeout(timer));
+            this.timers = [];
 
+            // Execute function once certain amount of time goes by in milliseconds
+            let powerDotTimer = setTimeout( () => {
+                this.powerDotActive = false;
+                this.powerDotExpire = false;
+            }, 1000 * 6)
+
+            this.timers.push(powerDotTimer);
+
+            let powerDotExpireTimer = setTimeout( () => {
+                this.powerDotExpire = true;
+            }, 1000 * 3);
+
+            this.timers.push(powerDotExpireTimer);
+        }
+    }
 
 
 

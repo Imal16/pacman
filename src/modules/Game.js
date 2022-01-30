@@ -16,8 +16,12 @@ const ghosts = gameMap.getGhosts(velocity);
 function gameLoop(){
     gameMap.draw(ctx);
     pacman.draw(ctx);
-    ghosts.forEach((ghost) => ghost.draw(ctx));
+    ghosts.forEach((ghost) => ghost.draw(ctx, pause(), pacman));
     
+}
+// Once Pac Man moves, game will not be pause and ghosts will start moving
+function pause(){
+    return !pacman.madeFirstMove;
 }
 
 
